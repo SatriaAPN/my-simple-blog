@@ -1,30 +1,52 @@
-version: '3.8'
-
 services:
-  backend:
+  gateway:
     build:
-      context: ./backend  # Path to the Django Dockerfile
+      context: ./gateway  # Path to the Django Dockerfile
     volumes:
-      - ./backend:/app  # Bind mount for live reload
+      - ./gateway:/app  # Bind mount for live reload
     ports:
       - "8000:8000"  # Expose Django on port 8000
     environment:
       - DEBUG=1
-    depends_on:
-      - db
+    networks:
+      - techops-network
 
-  frontend:
+  user-service:
     build:
-      context: ./frontend  # Path to the React Dockerfile
+      context: ./user_service
     volumes:
-      - ./frontend:/app  # Bind mount for live reload
-      - /app/node_modules  # Prevent overwriting node_modules
-    ports:
-      - "3000:3000"  # Expose React on port 3000
+      - ./user_service:/app
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Fix for file system watching in Docker
+      - DEBUG=1
+    depends_on:
+      - db-user-service
+    networks:
+      - techops-network
 
-  db:
+  # backend:
+  #   build:
+  #     context: ./backend  # Path to the Django Dockerfile
+  #   volumes:
+  #     - ./backend:/app  # Bind mount for live reload
+  #   ports:
+  #     - "8000:8000"  # Expose Django on port 8000
+  #   environment:
+  #     - DEBUG=1
+  #   depends_on:
+  #     - db
+
+  # frontend:
+  #   build:
+  #     context: ./frontend  # Path to the React Dockerfile
+  #   volumes:
+  #     - ./frontend:/app  # Bind mount for live reload
+  #     - /app/node_modules  # Prevent overwriting node_modules
+  #   ports:
+  #     - "3000:3000"  # Expose React on port 3000
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true  # Fix for file system watching in Docker
+
+  db-user-service:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -32,6 +54,14 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    container_name: db-user-service
+    networks:
+      - techops-network
 
 volumes:
   postgres_data:
+
+networks:
+    techops-network:

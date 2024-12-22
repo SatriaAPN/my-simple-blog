@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7=fb$$n2glw5_#=da4169v45^sd2+4!8y-=x3x1f8gjjw=s2dg'
+SECRET_KEY = 'django-insecure-ldaja9)rwx4nm&4ca6_5=f1+x0wf#hlcg)0zm^md2@g%h!@k$&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'myapp',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +75,15 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',             # Match POSTGRES_DB
+        'USER': 'user',                   # Match POSTGRES_USER
+        'PASSWORD': 'password',           # Match POSTGRES_PASSWORD
+        'HOST': 'localhost',        # Docker service name
+        'PORT': '5432',                   # Default PostgreSQL port
+        # 'OPTIONS': {
+        #     'sslmode': 'require',  # or 'prefer', depending on your setup
+        # },
     }
 }
 
@@ -121,3 +128,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+LOGIN_URL = '/auth/login'
