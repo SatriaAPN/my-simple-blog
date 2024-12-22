@@ -23,6 +23,8 @@ message AuthRequest {
 }
 
 message AuthResponse {
-    string authToken = 1;
-    bool isAuthenticated = 2;
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    string accessToken = 3;
+    string refreshToken = 4;
 }
