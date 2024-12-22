@@ -1,17 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import ReactDOM from 'react-dom/client'; // Import from 'react-dom/client' in React 18+
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Navbar from './Navbar';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// Create the root for the navbar
+const navbarRoot = ReactDOM.createRoot(document.getElementById('root-0'));
+navbarRoot.render(<Navbar />);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Create the root for the page content
+const contentRoot = ReactDOM.createRoot(document.getElementById('root-1'));
+contentRoot.render(<App />);
