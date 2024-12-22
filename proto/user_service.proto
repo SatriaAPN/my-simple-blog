@@ -2,6 +2,19 @@ syntax = "proto3";
 
 service UserService {
     rpc Authentication (AuthRequest) returns (AuthResponse);
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+}
+
+message CreateUserRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message CreateUserResponse {
+    bool isSuccess = 1;
+    int32 userId = 2;
+    string errorMsg = 3;
 }
 
 message AuthRequest {

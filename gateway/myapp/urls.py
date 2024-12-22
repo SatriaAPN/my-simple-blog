@@ -5,5 +5,5 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('auth/login', auth_login_view, name='login'),
     path('auth/register', auth_register_view, name='login'),
-    path('test', login_required(test_view), name='test'),
+    path('test', test_view, name='test'),
 ]

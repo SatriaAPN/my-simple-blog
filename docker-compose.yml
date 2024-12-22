@@ -1,11 +1,11 @@
 services:
   gateway:
     build:
-      context: ./gateway  # Path to the Django Dockerfile
+      context: ./gateway 
     volumes:
-      - ./gateway:/app  # Bind mount for live reload
+      - ./gateway:/app 
     ports:
-      - "8000:8000"  # Expose Django on port 8000
+      - "8000:8000" 
     environment:
       - DEBUG=1
     networks:
@@ -22,18 +22,6 @@ services:
       - db-user-service
     networks:
       - techops-network
-
-  # backend:
-  #   build:
-  #     context: ./backend  # Path to the Django Dockerfile
-  #   volumes:
-  #     - ./backend:/app  # Bind mount for live reload
-  #   ports:
-  #     - "8000:8000"  # Expose Django on port 8000
-  #   environment:
-  #     - DEBUG=1
-  #   depends_on:
-  #     - db
 
   # frontend:
   #   build:
