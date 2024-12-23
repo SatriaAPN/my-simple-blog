@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios
 import './RegisterPage.css'; // CSS for styling
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext'
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -9,6 +10,15 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); // To handle errors
   const navigate = useNavigate(); // Hook for navigation
+
+  const context = useAuth();
+
+  useEffect(() => {
+    if (context.accessToken) {
+      console.log('Access token found, navigating to home page...');
+      navigate('/');
+    }
+  }, [context.accessToken, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload

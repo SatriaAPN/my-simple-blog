@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios
 import './LoginPage.css'; // CSS for styling
 import { useAuth } from '../AuthContext'
@@ -11,8 +11,12 @@ const LoginPage = () => {
   const { accessToken, saveTokens, clearTokens } = useAuth();
   const navigate = useNavigate(); // Hook for navigation
 
-  const context = useAuth();
-  console.log('AuthContext:', context);
+  useEffect(() => {
+    if (accessToken) {
+      console.log('Access token found, navigating to home page...');
+      navigate('/');
+    }
+  }, [accessToken, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
