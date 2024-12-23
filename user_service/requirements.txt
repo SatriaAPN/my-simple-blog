@@ -2,3 +2,6 @@ Django==4.2
 grpcio>=1.58.0
 protobuf==5.29.2
 psycopg2-binary>=2.9.9,<3.0 
+djangorestframework
+djangorestframework-simplejwt
+bcrypt

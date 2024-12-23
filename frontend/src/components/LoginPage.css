@@ -1,3 +1,11 @@
+.content-container {
+  height: 100%;  /* Make sure the body and html take up the full height of the viewport */
+  margin: 0;     /* Remove default margin */
+  display: flex; /* Enable flexbox layout */
+  justify-content: center; /* Horizontally center the container */
+  align-items: center; /* Vertically center the container */
+}
+
 /* Style for the login-container */
 .login-container {
   width: 300px; /* Fixed width */
@@ -6,6 +14,7 @@
   border-radius: 8px;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
   background-color: white; /* Optional: Add background color */
+  margin-top: 15%;
 }
 
 h2 {
