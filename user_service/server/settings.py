@@ -170,9 +170,9 @@ LOGGING = {
             'propagate': True,
         },
         'myapp': {  # Custom logger for your app
-            'handlers': ['file'],
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
         },
     },
 }

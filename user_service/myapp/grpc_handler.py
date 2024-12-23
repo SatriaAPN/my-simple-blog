@@ -2,12 +2,9 @@ import logging
 import bcrypt
 import jwt
 from datetime import datetime, timedelta
-from typing import Dict
 from proto import user_service_pb2
 from .general_struct import UserStruct
-from myapp.repository.user_repository import getUserByEmail, createUser
-from rest_framework_simplejwt.tokens import RefreshToken
-from myapp.models import User
+from myapp.repository.user_repository import getUserByEmail, createUser, getUserById
 
 logger = logging.getLogger('myapp')
 
@@ -58,6 +55,21 @@ def authenticationHandler(request) -> user_service_pb2.AuthResponse:
 
     return user_service_pb2.AuthResponse(isSuccess=True, errorMsg="", accessToken=accessToken, refreshToken=refreshToken)
 
+def getUserByIdHandler(request) -> user_service_pb2.GetUserByIdResponse:
+    if not request.id:
+        return getUserByIdErrorResponse("user id must not be empty")
+    
+    user = getUserById(request.id)
+
+    if not user:
+        return getUserByIdErrorResponse("user not found")
+
+    return user_service_pb2.GetUserByIdResponse(isSuccess=True, errorMsg="", name=user.name)
+
+def getUserByIdErrorResponse(errorMsg: str) -> user_service_pb2.GetUserByIdResponse:
+    return user_service_pb2.GetUserByIdResponse(isSuccess=False, errorMsg=errorMsg, name="")
+
+
 def generateJwtToken(data: dict) -> list[str]:
     SECRET_KEY = "your-secret-key"
 
@@ -93,4 +105,3 @@ def generateJwtToken(data: dict) -> list[str]:
     
     # Return both tokens
     return [access_token, refresh_token]
-    

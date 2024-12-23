@@ -9,6 +9,11 @@ def getBlogByTitle(title: str) -> Blog:
 
   return blog
 
+def getBlogByUrl(url: str) -> Blog:
+  blog = Blog.objects.filter(url=url).first()
+
+  return blog
+
 def createBlog(blogData: BlogStruct) -> Blog:
   url = generateUrl(blogData.title)
 

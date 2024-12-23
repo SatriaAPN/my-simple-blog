@@ -2,6 +2,7 @@ syntax = "proto3";
 
 service BlogService {
     rpc CreateBlog (CreateBlogRequest) returns (CreateBlogResponse);
+    rpc GetBlogDetail (GetBlogDetailRequest) returns (GetBlogDetailResponse);
 }
 
 message CreateBlogRequest {
@@ -14,5 +15,19 @@ message CreateBlogResponse {
     bool isSuccess = 1;
     string errorMsg = 2;
     string url = 3;
+}
+
+message GetBlogDetailRequest {
+    string url = 1;
+}
+
+message GetBlogDetailResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    string blogTitle = 3;
+    string blogContent = 4;
+    string blogCreatedAt = 5;
+    int32 writerId = 6;
+    string writerName = 7;
 }
 
