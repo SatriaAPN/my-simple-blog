@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+service BlogService {
+    rpc CreateBlog (CreateBlogRequest) returns (CreateBlogResponse);
+}
+
+message CreateBlogRequest {
+    int32 writerId = 1;
+    string title = 2;
+    string content = 3;
+}
+
+message CreateBlogResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    string url = 3;
+}
+

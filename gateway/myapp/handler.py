@@ -1,7 +1,7 @@
 import grpc
 import json
 import logging
-from proto import user_service_pb2, user_service_pb2_grpc
+from proto import blog_service_pb2, blog_service_pb2_grpc
 from django.http import JsonResponse
 
 logger = logging.getLogger('myapp')
@@ -59,7 +59,31 @@ def auth_login_post_handler(request):
             }
         }
     )
-   
+
+def create_blog_post_handler(request):
+    try:
+      data = json.loads(request.body)
+      title = data.get("title")
+      content = data.get("content")
+    except json.JSONDecodeError:
+      return errorReturn("Invalid JSON", 400)
+
+    with grpc.insecure_channel('blog-service:50051') as channel:
+      stub = blog_service_pb2_grpc.BlogServiceStub(channel)
+      response = stub.CreateBlog(blog_service_pb2.CreateBlogRequest(writerId=1,title=title,content=content))
+    logger.info("ini dia", response)
+
+    if not response.isSuccess: 
+      return errorReturn(response.errorMsg, 400)
+
+    return JsonResponse(
+      {
+        "data": {
+          "url": response.url,
+        }
+      }, 
+      status=201
+    )
 
 def errorReturn(msg: str, status: int) -> JsonResponse:
     return JsonResponse(
