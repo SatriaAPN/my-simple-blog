@@ -1,5 +1,5 @@
 # Dockerfile for React Frontend
-FROM node:16-alpine
+FROM node:18.20
 
 # Set working directory inside the container
 WORKDIR /app

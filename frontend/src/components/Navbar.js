@@ -22,6 +22,11 @@ const Navbar = () => {
         <li style={liStyle}>
           <Link to="/" style={linkStyle}>Home</Link>
         </li>
+        {context.accessToken != null && ( // Render "Register" button conditionally
+          <li style={liStyle}>
+            <Link to="/blogs/create" style={linkStyle}>Create Blog</Link>
+          </li>
+        )}
         <li style={liStyle}>
           <Link to={loginOrLogoutUrl} style={linkStyle}>{loginOrLogout}</Link>
         </li>
@@ -36,7 +41,7 @@ const Navbar = () => {
 };
 
 const navbarStyle = {
-  backgroundColor: '#333',
+  backgroundColor: '#3d86d0',
   padding: '10px 20px',
   display: 'flex',
   justifyContent: 'flex-end',
