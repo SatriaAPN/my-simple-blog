@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
 import './LoginPage.css'; // CSS for styling
+import { useAuth } from '../AuthContext'
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); // To handle errors
+  const { accessToken, saveTokens, clearTokens } = useAuth();
+  const navigate = useNavigate(); // Hook for navigation
+
+  const context = useAuth();
+  console.log('AuthContext:', context);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
@@ -28,9 +35,14 @@ const LoginPage = () => {
           headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
         }
       );
+      
+      const data = response.data.data
 
-      console.log('Response:', response.data);
       alert('Login Successful!'); // Replace with proper navigation or state updates
+      
+      saveTokens(data.attributes.access_token, data.attributes.refresh_token);
+
+      navigate('/');
     } catch (err) {
       console.error('Error:', err);
       setError('Invalid email or password');
@@ -38,7 +50,6 @@ const LoginPage = () => {
   };
 
   return (
-    
     <div className="login-container">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}

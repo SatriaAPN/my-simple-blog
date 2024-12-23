@@ -14,7 +14,7 @@ def getUserByEmail(email: str) -> User:
 
 def createUser(userData: UserStruct) -> User:
   raw_password = userData.password 
-  hashed_password = str(bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt()))
+  hashed_password = bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt())
 
   user = User.objects.create(
       name=userData.name,
