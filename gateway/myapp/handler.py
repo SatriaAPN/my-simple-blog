@@ -71,7 +71,6 @@ def create_blog_post_handler(request):
     with grpc.insecure_channel('blog-service:50051') as channel:
       stub = blog_service_pb2_grpc.BlogServiceStub(channel)
       response = stub.CreateBlog(blog_service_pb2.CreateBlogRequest(writerId=1,title=title,content=content))
-    logger.info("ini dia", response)
 
     if not response.isSuccess: 
       return errorReturn(response.errorMsg, 400)
@@ -83,6 +82,38 @@ def create_blog_post_handler(request):
         }
       }, 
       status=201
+    )
+
+def blog_detail_get_handler(request, blogUrl):
+    with grpc.insecure_channel('blog-service:50051') as channel:
+      stub = blog_service_pb2_grpc.BlogServiceStub(channel)
+      response = stub.GetBlogDetail(blog_service_pb2.GetBlogDetailRequest(url=blogUrl))
+
+    if not response.isSuccess: 
+      return errorReturn(response.errorMsg, 400)
+
+    return JsonResponse(
+      {
+        "data": {
+          "type": "blogs",
+          "attributes": {
+            "title": response.blogTitle,
+            "content": response.blogContent,
+            "published_at": response.blogCreatedAt
+          },
+          "relationships": {
+            "writer": {
+              "data": {
+                "type": "writers",
+                "id": response.writerId,
+                "name": response.writerName
+              }
+            }
+          }
+        },
+      }
+      ,
+      status=200
     )
 
 def errorReturn(msg: str, status: int) -> JsonResponse:

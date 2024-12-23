@@ -11,23 +11,27 @@ services:
     networks:
       - techops-network
 
-  # user-service:
-  #   build:
-  #     context: ./user_service
-  #   volumes:
-  #     - ./user_service:/app
-  #   environment:
-  #     - DEBUG=1
-  #   depends_on:
-  #     - db-user-service
-  #   networks:
-  #     - techops-network
+  user-service:
+    build:
+      context: ./user_service
+    volumes:
+      - ./user_service:/app
+    ports:
+      - "50051:50051"
+    environment:
+      - DEBUG=1
+    depends_on:
+      - db-user-service
+    networks:
+      - techops-network
 
   blog-service:
     build:
       context: ./blog_service
     volumes:
       - ./blog_service:/app
+    ports:
+      - "50050:50051"
     environment:
       - DEBUG=1
     depends_on:
@@ -46,19 +50,19 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true  # Fix for file system watching in Docker
 
-  # db-user-service:
-  #   image: postgres:15
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: mydatabase
-  #   ports:
-  #     - "5432:5432"
-  #   container_name: db-user-service
-  #   networks:
-  #     - techops-network
+  db-user-service:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    container_name: db-user-service
+    networks:
+      - techops-network
 
   db-blog-service:
     image: postgres:15

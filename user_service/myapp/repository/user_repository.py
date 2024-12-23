@@ -1,14 +1,17 @@
 import bcrypt
 import logging
 from myapp.models import User
-from django.utils.crypto import get_random_string
-from django.contrib.auth.hashers import make_password
 from myapp.general_struct import UserStruct
 
 logger = logging.getLogger('myapp')
 
 def getUserByEmail(email: str) -> User:
   user = User.objects.filter(email=email).first()
+
+  return user
+
+def getUserById(userId: int) -> User:
+  user = User.objects.filter(id=userId).first()
 
   return user
 
