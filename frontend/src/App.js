@@ -5,6 +5,7 @@ import LogoutPage from './components/LogoutPage';
 import RegisterPage from './components/RegisterPage'
 import HomePage from './components/HomePage'
 import BlogsCreatePage from './components/BlogCreatePage'
+import BlogsDetailPage from './components/BlogDetailPage'
 import { AuthProvider } from './AuthContext'; // Import the provider
 import Navbar from './components/Navbar';  // Import Navbar
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/blogs/create" element={<BlogsCreatePage />} />
+            <Route path="/blogs/:title" element={<BlogsDetailPage />} />
           </Routes>
         </div>
       </Router>
