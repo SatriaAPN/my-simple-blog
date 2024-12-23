@@ -4,6 +4,7 @@ import LoginPage from './components/LoginPage';
 import LogoutPage from './components/LogoutPage';
 import RegisterPage from './components/RegisterPage'
 import HomePage from './components/HomePage'
+import BlogsCreatePage from './components/BlogCreatePage'
 import { AuthProvider } from './AuthContext'; // Import the provider
 import Navbar from './components/Navbar';  // Import Navbar
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/logout" element={<LogoutPage />} />
+            <Route path="/blogs/create" element={<BlogsCreatePage />} />
           </Routes>
         </div>
       </Router>
