@@ -116,6 +116,39 @@ def blog_detail_get_handler(request, blogUrl):
       status=200
     )
 
+def blog_list_get_handler(request):
+    page = int(request.GET.get('page', 1))
+
+    with grpc.insecure_channel('blog-service:50051') as channel:
+      stub = blog_service_pb2_grpc.BlogServiceStub(channel)
+      response = stub.GetBlogList(blog_service_pb2.GetBlogListRequest(page=page,pageSize=10))
+
+    if not response.isSuccess: 
+      return errorReturn(response.errorMsg, 400)
+
+    blogs = []
+
+    for blog in response.blogs:
+      blogs.append({
+        "url":blog.url,
+        "title":blog.title,
+        "createdAt":blog.createdAt
+      })
+
+    return JsonResponse(
+      {
+        "meta": {
+          "total": response.totalCount,
+          "prevPage": response.prevPage,
+          "currentPage":  response.page,
+          "nextPage": response.nextPage
+        },
+        "data": blogs
+      }
+      ,
+      status=200
+    )
+
 def errorReturn(msg: str, status: int) -> JsonResponse:
     return JsonResponse(
       {

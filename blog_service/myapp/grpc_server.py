@@ -3,7 +3,11 @@ import logging
 from concurrent import futures
 from proto import blog_service_pb2_grpc
 from collections import namedtuple
-from .grpc_handler import createBlogHandler, getBlogDetailHandler
+from .grpc_handler import (
+    createBlogHandler, 
+    getBlogDetailHandler,
+    getBlogListHandler,
+    )
 
 logger = logging.getLogger('myapp')
 
@@ -17,6 +21,11 @@ class BlogServiceServicer(blog_service_pb2_grpc.BlogServiceServicer):
         logger.info('GetBlogDetail: %s', request)
 
         return getBlogDetailHandler(request)
+    
+    def GetBlogList(self, request, context):
+        logger.info('GetBlogList: %s', request)
+
+        return getBlogListHandler(request)
         
 
 def serve():

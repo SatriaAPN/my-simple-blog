@@ -44,6 +44,11 @@ class BlogServiceStub(object):
                 request_serializer=proto_dot_blog__service__pb2.GetBlogDetailRequest.SerializeToString,
                 response_deserializer=proto_dot_blog__service__pb2.GetBlogDetailResponse.FromString,
                 _registered_method=True)
+        self.GetBlogList = channel.unary_unary(
+                '/BlogService/GetBlogList',
+                request_serializer=proto_dot_blog__service__pb2.GetBlogListRequest.SerializeToString,
+                response_deserializer=proto_dot_blog__service__pb2.GetBlogListResponse.FromString,
+                _registered_method=True)
 
 
 class BlogServiceServicer(object):
@@ -61,6 +66,12 @@ class BlogServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetBlogList(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BlogServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +84,11 @@ def add_BlogServiceServicer_to_server(servicer, server):
                     servicer.GetBlogDetail,
                     request_deserializer=proto_dot_blog__service__pb2.GetBlogDetailRequest.FromString,
                     response_serializer=proto_dot_blog__service__pb2.GetBlogDetailResponse.SerializeToString,
+            ),
+            'GetBlogList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBlogList,
+                    request_deserializer=proto_dot_blog__service__pb2.GetBlogListRequest.FromString,
+                    response_serializer=proto_dot_blog__service__pb2.GetBlogListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +145,33 @@ class BlogService(object):
             '/BlogService/GetBlogDetail',
             proto_dot_blog__service__pb2.GetBlogDetailRequest.SerializeToString,
             proto_dot_blog__service__pb2.GetBlogDetailResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetBlogList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/BlogService/GetBlogList',
+            proto_dot_blog__service__pb2.GetBlogListRequest.SerializeToString,
+            proto_dot_blog__service__pb2.GetBlogListResponse.FromString,
             options,
             channel_credentials,
             insecure,
