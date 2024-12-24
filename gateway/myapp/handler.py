@@ -118,10 +118,11 @@ def blog_detail_get_handler(request, blogUrl):
 
 def blog_list_get_handler(request):
     page = int(request.GET.get('page', 1))
+    pageSize = 10
 
     with grpc.insecure_channel('blog-service:50051') as channel:
       stub = blog_service_pb2_grpc.BlogServiceStub(channel)
-      response = stub.GetBlogList(blog_service_pb2.GetBlogListRequest(page=page,pageSize=10))
+      response = stub.GetBlogList(blog_service_pb2.GetBlogListRequest(page=page,pageSize=pageSize))
 
     if not response.isSuccess: 
       return errorReturn(response.errorMsg, 400)
@@ -141,7 +142,8 @@ def blog_list_get_handler(request):
           "total": response.totalCount,
           "prevPage": response.prevPage,
           "currentPage":  response.page,
-          "nextPage": response.nextPage
+          "nextPage": response.nextPage,
+          "blogPerPage": pageSize
         },
         "data": blogs
       }
