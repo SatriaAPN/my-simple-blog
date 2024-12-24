@@ -8,6 +8,7 @@ from .handler import (
     auth_login_post_handler, 
     create_blog_post_handler,
     blog_detail_get_handler,
+    blog_list_get_handler,
     )
 from django.http import JsonResponse
 
@@ -35,13 +36,16 @@ def auth_register_view(request):
         return auth_register_post_handler(request)
 
 @csrf_exempt
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 @permission_classes([AllowAny])
 def create_blog_view(request):
-    logger.info(request.method + ' /api/blog %s', request.body)
-
     if request.method == "POST":
+        logger.info(request.method + ' /api/blog %s', request.body)
         return create_blog_post_handler(request)
+    elif request.method == "GET":
+        logger.info(request.method + ' /api/blog %s', request.GET)
+        return blog_list_get_handler(request)
+
 
 @csrf_exempt
 @api_view(['Get'])

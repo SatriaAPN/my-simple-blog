@@ -1,8 +1,14 @@
 import grpc
 import logging
+import math
 from proto import blog_service_pb2
 from .general_struct import BlogStruct
-from myapp.repository.blog_repository import getBlogByTitle, createBlog, getBlogByUrl
+from myapp.repository.blog_repository import (
+    getBlogByTitle, 
+    createBlog, 
+    getBlogByUrl,
+    getBlogList
+    )
 from proto import user_service_pb2, user_service_pb2_grpc
 
 logger = logging.getLogger('myapp')
@@ -56,3 +62,40 @@ def getBlogDetailHandler(request) -> blog_service_pb2.GetBlogDetailResponse:
 
 def getBlogDetailErrorResponse(errorMsg: str) -> blog_service_pb2.GetBlogDetailResponse:
     return blog_service_pb2.GetBlogDetailResponse(isSuccess=False, errorMsg= errorMsg)
+
+def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
+    if not request.page:
+        request.page = 1
+    if not request.pageSize:
+        request.pageSize = 10
+
+    request.page = max(request.page,1)
+    logger.info("here1s")
+
+    response = getBlogList(request.page, request.pageSize)
+    logger.info(f'Array contents: {response}')
+    # Prepare response
+    parsedBlogs = []
+
+    for blog in response["blogs"]:
+        parsedBlogs.append(blog_service_pb2.BlogSummary(
+            url=blog["url"],
+            title=blog["title"],
+            createdAt = str(blog["createdAt"])
+        ))
+
+    logger.info(f'Array contents: {parsedBlogs}')
+
+    maxPage = math.ceil(response["totalCount"] / request.pageSize)
+    request.page = min(request.page, maxPage)
+    
+    return blog_service_pb2.GetBlogListResponse(
+        isSuccess=True,
+        errorMsg="",
+        blogs=parsedBlogs,
+        totalCount=response["totalCount"],
+        page=request.page,
+        prevPage=None if request.page==1 else request.page-1,
+        nextPage=None if request.page==maxPage else request.page+1,
+        pageSize=request.pageSize
+    )
