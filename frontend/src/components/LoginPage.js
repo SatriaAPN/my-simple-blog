@@ -1,45 +1,45 @@
-import React, { useState } from 'react';
-import axios from 'axios'; // Import Axios
-import './LoginPage.css'; // CSS for styling
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './LoginPage.css';
 import { useAuth } from '../AuthContext'
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null); // To handle errors
-  const { accessToken, saveTokens, clearTokens } = useAuth();
-  const navigate = useNavigate(); // Hook for navigation
+  const [error, setError] = useState(null);
+  const { accessToken, saveTokens } = useAuth();
+  const navigate = useNavigate();
 
-  const context = useAuth();
-  console.log('AuthContext:', context);
+  useEffect(() => {
+    if (accessToken) {
+      console.log('Access token found, navigating to home page...');
+      navigate('/');
+    }
+  }, [accessToken, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
 
-    // Basic Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
-      // Replace this URL with your backend API endpoint
       const response = await axios.post(
-        'http://localhost:8000/api/auth/login', 
+        'http://localhost:8000/api/auth/login/', 
         {
           email,
           password,
         },
         {
-          headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
+          headers: { 'Content-Type': 'application/json' },
         }
       );
       
       const data = response.data.data
 
-      alert('Login Successful!'); // Replace with proper navigation or state updates
-      
       saveTokens(data.attributes.access_token, data.attributes.refresh_token);
 
       navigate('/');

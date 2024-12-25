@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { jwtDecode } from "jwt-decode";
+import axios from 'axios';
 
-// Create Context
 const AuthContext = createContext();
 
-// Provider Component
 export const AuthProvider = ({ children }) => {
-  // Get tokens from localStorage on load
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || null);
 
-  // Save tokens in localStorage
   const saveTokens = (access, refresh) => {
     setAccessToken(access);
     setRefreshToken(refresh);
@@ -23,6 +21,62 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   };
+
+  const checkTokenExp = () => {
+    if (accessToken == null) {
+      console.log('accessToken is empty')
+      return false
+    }
+
+    console.log('checking accessToken expiration')
+
+    if (isExpired(refreshToken)) {
+      console.log("refresh token expired")
+      clearTokens()
+
+      return true
+    }
+
+    if (!isExpired(accessToken)) {
+      console.log("access token not expired")
+      return false
+    }
+
+    console.log("access token expired")
+
+
+    try {
+      console.log("refreshing access token")
+      axios.post(
+        'http://localhost:8000/api/token/refresh/', 
+        {
+          refresh_token: refreshToken,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      ).then((response => {
+        setAccessToken(response.data.data.attributes.access_token);
+        localStorage.setItem('accessToken', response.data.data.attributes.access_token);
+        return false
+      }), (err) => {throw err})
+    } catch (err) {
+      console.log("refreshing access token failed, proceed to login page..", err)
+      clearTokens()
+      return true
+    }
+  }
+
+  const isExpired = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+      return decoded.exp < currentTime;
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return true; // Treat invalid tokens as expired
+    }
+  }
 
   // Automatically clear tokens on logout or session expiry
   useEffect(() => {
@@ -38,11 +92,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, saveTokens, clearTokens }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, saveTokens, clearTokens, checkTokenExp }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook to use the context
 export const useAuth = () => useContext(AuthContext);

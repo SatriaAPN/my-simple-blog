@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+service BlogService {
+    rpc CreateBlog (CreateBlogRequest) returns (CreateBlogResponse);
+    rpc GetBlogDetail (GetBlogDetailRequest) returns (GetBlogDetailResponse);
+    rpc GetBlogList (GetBlogListRequest) returns (GetBlogListResponse);
+}
+
+message CreateBlogRequest {
+    int32 writerId = 1;
+    string title = 2;
+    string content = 3;
+}
+
+message CreateBlogResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    string url = 3;
+}
+
+message GetBlogDetailRequest {
+    string url = 1;
+}
+
+message GetBlogDetailResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    string blogTitle = 3;
+    string blogContent = 4;
+    string blogCreatedAt = 5;
+    int32 writerId = 6;
+    string writerName = 7;
+}
+
+message GetBlogListRequest {
+    int32 page = 1;
+    int32 pageSize = 2;
+}
+
+message BlogSummary {
+    string url = 1;
+    string title = 2;
+    string createdAt = 3;
+}
+
+message GetBlogListResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
+    repeated BlogSummary blogs = 3;
+    int32 totalCount = 4;
+    int32 page = 5;
+    int32 prevPage = 6;
+    int32 nextPage = 7;
+    int32 pageSize = 8;
+}

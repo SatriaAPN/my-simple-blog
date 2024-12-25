@@ -28,3 +28,8 @@ logs/
 # Ignore OS-generated files
 .DS_Store
 Thumbs.db
+
+# ignore python pycache
+__pycache__/
+*.pyc
+*.pyo

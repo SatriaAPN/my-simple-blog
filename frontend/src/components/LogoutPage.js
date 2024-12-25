@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LogoutPage = () => {
   const { clearTokens } = useAuth();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   clearTokens();
 
