@@ -5,13 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('myapp', '0001_create_user_table'),
-    ]
+  dependencies = [
+      ('myapp', '0001_create_user_table'),
+  ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='user',
-            name='salt',
-        ),
-    ]
+  operations = [
+      migrations.RemoveField(
+          model_name='user',
+          name='salt',
+      ),
+  ]

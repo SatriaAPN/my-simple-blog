@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7=fb$$n2glw5_#=da4169v45^sd2+4!8y-=x3x1f8gjjw=s2dg'
+SECRET_KEY = 'your-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -73,16 +73,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -94,7 +86,6 @@ DATABASES = {
         'PORT': '5432',                   # Default PostgreSQL port
     }
 }
-
 
 
 # Password validation
@@ -155,22 +146,22 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'django_debug.log',  # Log file name
+            'filename': 'django_debug.log',
             'formatter': 'verbose',
         },
         'console': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',  # Logs to the console
+            'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
     },
     'loggers': {
-        'django': {  # Logger for Django system logs
-            'handlers': ['file', 'console'],  # Send logs to both file and console
-            'level': 'DEBUG',  # Minimum log level
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
-        'myapp': {  # Custom logger for your app
+        'myapp': {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True,
@@ -182,10 +173,10 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": "your-secret-key",
+    "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "ROTATE_REFRESH_TOKENS": False,  # Optional, if you're using refresh tokens
-    "BLACKLIST_AFTER_ROTATION": False,  # Optional, if you're using blacklist
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
