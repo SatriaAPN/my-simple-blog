@@ -3,7 +3,7 @@ from myapp.grpc_server import serve
 
 
 class Command(BaseCommand):
-    help = 'Start the gRPC server'
+  help = 'Start the gRPC server'
 
-    def handle(self, *args, **kwargs):
-        serve()
+  def handle(self, *args, **kwargs):
+    serve()

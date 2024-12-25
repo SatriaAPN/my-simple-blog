@@ -1,11 +1,11 @@
-import React from 'react';
-// import { Link } from 'react-router-dom';
+import React, {useEffect} from 'react';
 import { useAuth } from '../AuthContext'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const Navbar = () => {
   const context = useAuth();
+  const navigate = useNavigate();
   console.log('navbar AuthContext:', context);
 
   let loginOrLogout = "Logout"
@@ -16,13 +16,22 @@ const Navbar = () => {
     loginOrLogoutUrl = "/login"
   }
 
+  useEffect(() => {
+    if (context.checkTokenExp()) {
+      alert('session time is out, please login again');
+
+      navigate('/login');
+    }
+
+  }, [context, navigate]);
+
   return (
     <nav style={navbarStyle}>
       <ul style={ulStyle}>
         <li style={liStyle}>
           <Link to="/" style={linkStyle}>Home</Link>
         </li>
-        {context.accessToken != null && ( // Render "Register" button conditionally
+        {context.accessToken != null && ( 
           <li style={liStyle}>
             <Link to="/blogs/create" style={linkStyle}>Create Blog</Link>
           </li>
@@ -30,7 +39,7 @@ const Navbar = () => {
         <li style={liStyle}>
           <Link to={loginOrLogoutUrl} style={linkStyle}>{loginOrLogout}</Link>
         </li>
-        {context.accessToken == null && ( // Render "Register" button conditionally
+        {context.accessToken == null && (
           <li style={liStyle}>
             <Link to="/register" style={linkStyle}>Register</Link>
           </li>
@@ -50,14 +59,14 @@ const navbarStyle = {
 const ulStyle = {
   listStyleType: 'none',
   display: 'flex',
-  justifyContent: 'center', // Centers the items horizontally
-  alignItems: 'center',     // Aligns the items vertically if needed
+  justifyContent: 'center',
+  alignItems: 'center', 
   padding: 0,
   margin: 0,
 };
 
 const liStyle = {
-  margin: '0 15px', // Space between menu items
+  margin: '0 15px', 
 };
 
 const linkStyle = {

@@ -1,57 +1,67 @@
-import grpc
 import logging
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes
 from .handler import (
-    auth_register_post_handler, 
-    auth_login_post_handler, 
+    auth_register_post_handler,
+    auth_login_post_handler,
     create_blog_post_handler,
     blog_detail_get_handler,
     blog_list_get_handler,
-    )
-from django.http import JsonResponse
+    token_refresh_post_handler,
+)
+from rest_framework.viewsets import ViewSet
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
 
 logger = logging.getLogger('myapp')
 
-def test_view(request):
-    return JsonResponse({"test": "here"})
+class BlogViewSet(ViewSet):
+  permission_classes_by_action = {
+      'list': [AllowAny],
+      'create': [IsAuthenticated],
+      'retrieve': [AllowAny]
+  }
 
-@csrf_exempt
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def auth_login_view(request):
+  def get_permissions(self):
+    try:
+      return [permission() for permission in self.permission_classes_by_action[self.action]]
+    except KeyError:
+      return [permission() for permission in self.permission_classes]
+
+  def list(self, request):
+    logger.info(request.method + ' /api/blogs %s', request.GET)
+    return blog_list_get_handler(request)
+
+  def create(self, request):
+    logger.info(request.method + ' /api/blogs %s', str(request.body))
+    return create_blog_post_handler(request)
+
+  def retrieve(self, request, pk):
+    logger.info(request.method + ' /api/blogs/' + pk)
+
+    return blog_detail_get_handler(request, pk)
+
+
+class LoginView(APIView):
+  permission_classes = [AllowAny]
+
+  def post(self, request):
     logger.info(request.method + ' /api/auth/login %s', request.body)
 
-    if request.method == "POST":
-        return auth_login_post_handler(request)
+    return auth_login_post_handler(request)
 
-@csrf_exempt
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def auth_register_view(request):
+
+class RegisterView(APIView):
+  permission_classes = [AllowAny]
+
+  def post(self, request):
     logger.info(request.method + ' /api/auth/register %s', request.body)
 
-    if request.method == "POST":
-        return auth_register_post_handler(request)
-
-@csrf_exempt
-@api_view(['POST', 'GET'])
-@permission_classes([AllowAny])
-def create_blog_view(request):
-    if request.method == "POST":
-        logger.info(request.method + ' /api/blog %s', request.body)
-        return create_blog_post_handler(request)
-    elif request.method == "GET":
-        logger.info(request.method + ' /api/blog %s', request.GET)
-        return blog_list_get_handler(request)
+    return auth_register_post_handler(request)
 
 
-@csrf_exempt
-@api_view(['Get'])
-@permission_classes([AllowAny])
-def get_blog_view(request, blogUrl=None):
-    logger.info(request.method + ' /api/blogs/' + blogUrl)
+class TokenRefreshView(APIView):
+  permission_classes = [AllowAny]
 
-    if request.method == "GET":
-        return blog_detail_get_handler(request, blogUrl)
+  def post(self, request):
+    logger.info(request.method + ' /api/token/refresh/ %s', request.body)
+
+    return token_refresh_post_handler(request)

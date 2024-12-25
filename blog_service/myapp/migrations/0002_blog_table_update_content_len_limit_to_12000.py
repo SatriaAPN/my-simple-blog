@@ -5,19 +5,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('myapp', '0001_create_blog_table'),
-    ]
+  dependencies = [
+      ("myapp", "0001_create_blog_table"),
+  ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='blog',
-            name='content',
-            field=models.CharField(max_length=12000),
-        ),
-        migrations.AlterField(
-            model_name='blog',
-            name='title',
-            field=models.CharField(max_length=300),
-        ),
-    ]
+  operations = [
+      migrations.AlterField(
+          model_name="blog",
+          name="content",
+          field=models.CharField(max_length=12000),
+      ),
+      migrations.AlterField(
+          model_name="blog",
+          name="title",
+          field=models.CharField(max_length=300),
+      ),
+  ]

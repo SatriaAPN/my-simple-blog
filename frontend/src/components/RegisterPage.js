@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
-import './RegisterPage.css'; // CSS for styling
+import axios from 'axios'; 
+import './RegisterPage.css'; 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext'
 
@@ -8,8 +8,8 @@ const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null); // To handle errors
-  const navigate = useNavigate(); // Hook for navigation
+  const [error, setError] = useState(null); 
+  const navigate = useNavigate(); 
 
   const context = useAuth();
 
@@ -21,32 +21,29 @@ const RegisterPage = () => {
   }, [context.accessToken, navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault(); 
 
-    // Basic Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
-      // Replace this URL with your backend API endpoint
       const response = await axios.post(
-        'http://localhost:8000/api/auth/register', 
+        'http://localhost:8000/api/auth/register/', 
         {
           name,
           email,
           password,
         },
         {
-          headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
+          headers: { 'Content-Type': 'application/json' },
         }
       );
 
-      console.log('Response:', response.data);
-      alert('Register Successful!'); // Replace with proper navigation or state updates
+      alert('Register Successful!');
+
       navigate('/login');
-      
     } catch (err) {
       console.error('Error:', err);
       if (err.response && err.response.data && err.response.data.errors) {
@@ -89,7 +86,7 @@ const RegisterPage = () => {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
     </div>
   );
