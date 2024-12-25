@@ -2,8 +2,6 @@ services:
   gateway:
     build:
       context: ./gateway 
-    volumes:
-      - ./gateway:/app 
     ports:
       - "8000:8000" 
     environment:
@@ -14,33 +12,28 @@ services:
   user-service:
     build:
       context: ./user_service
-    volumes:
-      - ./user_service:/app
     environment:
       - DEBUG=1
     depends_on:
-      - db-user-service
+      db-user-service:
+        condition: service_healthy
     networks:
       - techops-network
 
   blog-service:
     build:
       context: ./blog_service
-    volumes:
-      - ./blog_service:/app
     environment:
       - DEBUG=1
     depends_on:
-      - db-blog-service
+      db-blog-service:
+        condition: service_healthy
     networks:
       - techops-network
 
   frontend:
     build:
       context: ./frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     ports:
       - "3000:3000"
     environment:
@@ -48,8 +41,6 @@ services:
 
   db-user-service:
     image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -57,11 +48,15 @@ services:
     container_name: db-user-service
     networks:
       - techops-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "mydatabase"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
 
   db-blog-service:
     image: postgres:15
-    volumes:
-      - blog_service_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -69,10 +64,12 @@ services:
     container_name: db-blog-service
     networks:
       - techops-network
-
-volumes:
-  postgres_data:
-  blog_service_data:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "mydatabase"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
 
 networks:
-    techops-network:
+  techops-network:
