@@ -6,8 +6,8 @@ import RegisterPage from './components/RegisterPage'
 import HomePage from './components/HomePage'
 import BlogsCreatePage from './components/BlogCreatePage'
 import BlogsDetailPage from './components/BlogDetailPage'
-import { AuthProvider } from './AuthContext'; // Import the provider
-import Navbar from './components/Navbar';  // Import Navbar
+import { AuthProvider } from './AuthContext';
+import Navbar from './components/Navbar';
 
 
 function App() {

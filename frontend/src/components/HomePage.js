@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider'; // For section separation
+import Divider from '@mui/material/Divider';
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState([]);

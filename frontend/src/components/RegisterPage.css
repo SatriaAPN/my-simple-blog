@@ -1,11 +1,10 @@
-/* Style for the login-container */
 .register-container {
-  width: 300px; /* Fixed width */
+  width: 300px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
-  background-color: white; /* Optional: Add background color */
+  background-color: white; 
   margin-top: 15%;
 }
 

@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -49,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -145,34 +143,34 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'django_debug.log',  # Log file name
+            'filename': 'django_debug.log',
             'formatter': 'verbose',
         },
         'console': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',  # Logs to the console
+            'class': 'logging.StreamHandler', 
             'formatter': 'simple',
         },
     },
     'loggers': {
-        'django': {  # Logger for Django system logs
+        'django': { 
             'handlers': ['file', 'console'],
             'propagate': True,
         },
-        'myapp': {  # Custom logger for your app
+        'myapp': { 
             'handlers': ['file', 'console'],
-            'level': 'DEBUG',  # Make sure the level is DEBUG
+            'level': 'DEBUG',
             'propagate': False,
         },
     },
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React app URL
+    "http://localhost:3000", 
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',  # React app origin
+    'http://localhost:3000', 
 ]
 
 SIMPLE_JWT = {
@@ -181,6 +179,6 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "ROTATE_REFRESH_TOKENS": False,  # Optional, if you're using refresh tokens
-    "BLACKLIST_AFTER_ROTATION": False,  # Optional, if you're using blacklist
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
 }

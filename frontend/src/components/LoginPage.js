@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
-import './LoginPage.css'; // CSS for styling
+import axios from 'axios';
+import './LoginPage.css';
 import { useAuth } from '../AuthContext'
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null); // To handle errors
+  const [error, setError] = useState(null);
   const { accessToken, saveTokens } = useAuth();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (accessToken) {
@@ -21,14 +21,12 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
 
-    // Basic Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
-      // Replace this URL with your backend API endpoint
       const response = await axios.post(
         'http://localhost:8000/api/auth/login/', 
         {
@@ -36,7 +34,7 @@ const LoginPage = () => {
           password,
         },
         {
-          headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
+          headers: { 'Content-Type': 'application/json' },
         }
       );
       

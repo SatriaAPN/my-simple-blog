@@ -16,8 +16,6 @@ services:
       context: ./user_service
     volumes:
       - ./user_service:/app
-    ports:
-      - "50051:50051"
     environment:
       - DEBUG=1
     depends_on:
@@ -30,8 +28,6 @@ services:
       context: ./blog_service
     volumes:
       - ./blog_service:/app
-    ports:
-      - "50050:50051"
     environment:
       - DEBUG=1
     depends_on:
@@ -41,14 +37,14 @@ services:
 
   frontend:
     build:
-      context: ./frontend  # Path to the React Dockerfile
+      context: ./frontend
     volumes:
-      - ./frontend:/app  # Bind mount for live reload
-      - /app/node_modules  # Prevent overwriting node_modules
+      - ./frontend:/app
+      - /app/node_modules
     ports:
-      - "3000:3000"  # Expose React on port 3000
+      - "3000:3000"
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Fix for file system watching in Docker
+      - CHOKIDAR_USEPOLLING=true
 
   db-user-service:
     image: postgres:15
@@ -58,8 +54,6 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydatabase
-    ports:
-      - "5432:5432"
     container_name: db-user-service
     networks:
       - techops-network
@@ -72,8 +66,6 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydatabase
-    ports:
-      - "5431:5432"
     container_name: db-blog-service
     networks:
       - techops-network

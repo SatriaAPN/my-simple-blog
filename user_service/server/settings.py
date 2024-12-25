@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -158,12 +157,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file', 'console'],
-            'level': 'DEBUG',
+            # 'level': 'DEBUG',
             'propagate': True,
         },
         'myapp': {
             'handlers': ['file', 'console'],
-            'level': 'DEBUG',
+            # 'level': 'DEBUG',
             'propagate': True,
         },
     },

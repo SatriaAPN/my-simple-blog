@@ -100,7 +100,6 @@ def generateJwtToken(data: dict) -> list[str]:
       algorithm="HS256"
   )
 
-  # Create refresh token
   refresh_token = jwt.encode(
       {
           "user_id": data["id"],
@@ -113,5 +112,4 @@ def generateJwtToken(data: dict) -> list[str]:
       algorithm="HS256"
   )
 
-  # Return both tokens
   return [access_token, refresh_token]

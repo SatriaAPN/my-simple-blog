@@ -2,6 +2,7 @@ import grpc
 import json
 import logging
 import jwt
+from http import HTTPStatus
 from proto import (
     user_service_pb2_grpc,
     user_service_pb2,
@@ -23,7 +24,7 @@ def auth_register_post_handler(request):
     email = data.get("email")
     password = data.get("password")
   except json.JSONDecodeError:
-    return errorReturn("Invalid JSON", 400)
+    return errorReturn("Invalid JSON", HTTPStatus.BAD_REQUEST)
 
   with grpc.insecure_channel('user-service:50051') as channel:
     stub = user_service_pb2_grpc.UserServiceStub(channel)
@@ -32,7 +33,7 @@ def auth_register_post_handler(request):
         name=name, email=email, password=password))
 
   if not response.isSuccess:
-    return errorReturn(response.errorMsg, 400)
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
 
   return JsonResponse(
       {
@@ -40,7 +41,7 @@ def auth_register_post_handler(request):
               "id": response.userId,
           }
       },
-      status=201
+      status=HTTPStatus.CREATED
   )
 
 
@@ -50,7 +51,7 @@ def auth_login_post_handler(request):
     email = data.get("email")
     password = data.get("password")
   except json.JSONDecodeError:
-    return errorReturn("Invalid JSON", 400)
+    return errorReturn("Invalid JSON", HTTPStatus.BAD_REQUEST)
 
   with grpc.insecure_channel('user-service:50051') as channel:
     stub = user_service_pb2_grpc.UserServiceStub(channel)
@@ -58,7 +59,7 @@ def auth_login_post_handler(request):
         user_service_pb2.AuthRequest(email=email, password=password))
 
   if not response.isSuccess:
-    return errorReturn(response.errorMsg, 403)
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
 
   return JsonResponse(
       {
@@ -70,7 +71,8 @@ def auth_login_post_handler(request):
                   "token_type": "Bearer",
               },
           }
-      }
+      },
+      status=HTTPStatus.OK
   )
 
 
@@ -82,7 +84,7 @@ def create_blog_post_handler(request):
     title = data.get("title")
     content = data.get("content")
   except json.JSONDecodeError:
-    return errorReturn("Invalid JSON", 400)
+    return errorReturn("Invalid JSON", HTTPStatus.BAD_REQUEST)
 
   with grpc.insecure_channel('blog-service:50051') as channel:
     stub = blog_service_pb2_grpc.BlogServiceStub(channel)
@@ -90,7 +92,7 @@ def create_blog_post_handler(request):
         writerId=userId, title=title, content=content))
 
   if not response.isSuccess:
-    return errorReturn(response.errorMsg, 400)
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
 
   return JsonResponse(
       {
@@ -98,7 +100,7 @@ def create_blog_post_handler(request):
               "url": response.url,
           }
       },
-      status=201
+      status=HTTPStatus.CREATED
   )
 
 
@@ -109,7 +111,7 @@ def blog_detail_get_handler(request, blogUrl):
         blog_service_pb2.GetBlogDetailRequest(url=blogUrl))
 
   if not response.isSuccess:
-    return errorReturn(response.errorMsg, 400)
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
 
   return JsonResponse(
       {
@@ -131,7 +133,7 @@ def blog_detail_get_handler(request, blogUrl):
               }
           },
       },
-      status=200
+      status=HTTPStatus.OK
   )
 
 
@@ -145,7 +147,7 @@ def blog_list_get_handler(request):
         blog_service_pb2.GetBlogListRequest(page=page, pageSize=pageSize))
 
   if not response.isSuccess:
-    return errorReturn(response.errorMsg, 400)
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
 
   blogs = []
 
@@ -167,9 +169,8 @@ def blog_list_get_handler(request):
           },
           "data": blogs
       },
-      status=200
+      status=HTTPStatus.OK
   )
-
 
 def token_refresh_post_handler(request):
   try:
@@ -180,10 +181,10 @@ def token_refresh_post_handler(request):
         refresh_token, settings.SECRET_KEY, algorithms=["HS256"])
 
     if decoded_token["exp"] < datetime.now().timestamp():
-      return errorReturn("Refresh token is expired.", 401)
+      return errorReturn("Refresh token is expired.", HTTPStatus.UNAUTHORIZED)
 
     if decoded_token["token_type"] != "refresh":
-      return errorReturn("Invalid token type.", 401)
+      return errorReturn("Invalid token type.", HTTPStatus.UNAUTHORIZED)
 
     access_exp = datetime.now() + timedelta(minutes=60)
 
@@ -208,18 +209,18 @@ def token_refresh_post_handler(request):
                     "token_type": "Bearer",
                 },
             }
-        }
+        },
+        status=HTTPStatus.OK
     )
 
   except jwt.ExpiredSignatureError:
-    return errorReturn("Refresh token has expired.", 401)
+    return errorReturn("Refresh token has expired.", HTTPStatus.UNAUTHORIZED)
   except jwt.InvalidTokenError:
-    return errorReturn("Invalid token.", 401)
+    return errorReturn("Invalid token.", HTTPStatus.UNAUTHORIZED)
   except Exception as e:
-    return errorReturn(str(e), 401)
+    return errorReturn(str(e), HTTPStatus.UNAUTHORIZED)
 
-
-def errorReturn(msg: str, status: int) -> JsonResponse:
+def errorReturn(msg: str, status: HTTPStatus) -> JsonResponse:
   return JsonResponse(
       {
           "errors": [

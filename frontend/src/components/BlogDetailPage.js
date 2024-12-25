@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
-import './RegisterPage.css'; // CSS for styling
+import axios from 'axios'; 
+import './RegisterPage.css';
 import { useParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 const BlogDetailPage = () => {
-  const { title } = useParams(); // Extract the 'title' parameter from the URL
+  const { title } = useParams(); 
   const [blogData, setBlogData] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const fetchBlogData = async () => {
@@ -18,20 +18,21 @@ const BlogDetailPage = () => {
         const response = await axios.get(
           `http://localhost:8000/api/blogs/${title}/`, 
           {
-            headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
+            headers: { 'Content-Type': 'application/json' },
           }
         );
-        console.log(response)
 
         if (response.statusText !== "OK") {
           throw new Error('Blog not found');
         } 
+
         const data = response.data.data;
-        setBlogData(data); // Set the fetched data
+
+        setBlogData(data); 
       } catch (error) {
-        setError(error.message); // Handle errors
+        setError(error.message);
       } finally {
-        setLoading(false); // Set loading to false once done
+        setLoading(false);
       }
     };
 
