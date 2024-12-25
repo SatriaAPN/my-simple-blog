@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ldaja9)rwx4nm&4ca6_5=f1+x0wf#hlcg)0zm^md2@g%h!@k$&'
+SECRET_KEY = 'your-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -73,7 +75,7 @@ TEMPLATES = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'server.middlewares.custom_authentication.CustomJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -154,13 +156,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {  # Logger for Django system logs
-            'handlers': ['file', 'console'],  # Send logs to both file and console
-            'level': 'DEBUG',  # Minimum log level
+            'handlers': ['file', 'console'],
             'propagate': True,
         },
         'myapp': {  # Custom logger for your app
             'handlers': ['file', 'console'],
-            'level': 'DEBUG',
+            'level': 'DEBUG',  # Make sure the level is DEBUG
             'propagate': False,
         },
     },
@@ -173,3 +174,13 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',  # React app origin
 ]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": "your-secret-key",
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "ROTATE_REFRESH_TOKENS": False,  # Optional, if you're using refresh tokens
+    "BLACKLIST_AFTER_ROTATION": False,  # Optional, if you're using blacklist
+}

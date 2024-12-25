@@ -1,3 +1,4 @@
+import uuid
 import logging
 import bcrypt
 import jwt
@@ -69,24 +70,28 @@ def getUserByIdHandler(request) -> user_service_pb2.GetUserByIdResponse:
 def getUserByIdErrorResponse(errorMsg: str) -> user_service_pb2.GetUserByIdResponse:
     return user_service_pb2.GetUserByIdResponse(isSuccess=False, errorMsg=errorMsg, name="")
 
+SECRET_KEY = "your-secret-key"
+
 
 def generateJwtToken(data: dict) -> list[str]:
-    SECRET_KEY = "your-secret-key"
-
     print("Generating token for data:", data)
     
     # Access token expiration (15 minutes)
-    access_exp = datetime.now() + timedelta(minutes=15)
+    access_exp = datetime.now() + timedelta(minutes=60)
     
     # Refresh token expiration (7 days)
-    refresh_exp = datetime.now() + timedelta(days=7)
+    refresh_exp = datetime.now() + timedelta(hours=24)
+
+    jti = str(uuid.uuid4())
     
     # Create access token
     access_token = jwt.encode(
         {
-            "sub": data["id"],  # User ID
-            "role": data["role"],  # User role
-            "exp": access_exp  # Expiry time
+            "user_id": data["id"],
+            "user_role": data["role"],  # User role
+            "exp": access_exp,  # Expiry time
+            "token_type": "access",
+            "jti": jti 
         },
         SECRET_KEY,
         algorithm="HS256"
@@ -95,13 +100,35 @@ def generateJwtToken(data: dict) -> list[str]:
     # Create refresh token
     refresh_token = jwt.encode(
         {
-            "sub": data["id"],  # User ID
-            "role": data["role"],  # User role
-            "exp": refresh_exp  # Expiry time
+            "user_id": data["id"],
+            "user_role": data["role"],  # User role
+            "exp": refresh_exp,  # Expiry time
+            "token_type": "refresh",
+            "jti": jti 
         },
         SECRET_KEY,
         algorithm="HS256"
     )
     
+    decodeJwtToken(access_token)
+
     # Return both tokens
     return [access_token, refresh_token]
+
+def decodeJwtToken(token: str):
+    try:
+        
+        logger.info("here11 %s", token)
+        logger.info("here1")
+        # Decode the token
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        logger.info("here2 %s", decoded)
+
+    except jwt.ExpiredSignatureError:
+        logger.info("here3 %s", jwt.ExpiredSignatureError)
+        
+    
+    except jwt.InvalidTokenError:
+        logger.info("here4 %s", str(jwt.InvalidTokenError))
+        
+    

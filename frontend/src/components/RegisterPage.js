@@ -32,7 +32,7 @@ const RegisterPage = () => {
     try {
       // Replace this URL with your backend API endpoint
       const response = await axios.post(
-        'http://localhost:8000/api/auth/register', 
+        'http://localhost:8000/api/auth/register/', 
         {
           name,
           email,

@@ -1,20 +1,34 @@
-import React from 'react';
-// import { Link } from 'react-router-dom';
+import React, {useEffect} from 'react';
 import { useAuth } from '../AuthContext'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const Navbar = () => {
   const context = useAuth();
+  const navigate = useNavigate(); // Hook for navigation
   console.log('navbar AuthContext:', context);
 
   let loginOrLogout = "Logout"
   let loginOrLogoutUrl = "/logout"
+  console.log('navbar AuthContext2:', context);
 
   if (context.accessToken == null) {
     loginOrLogout = "Login"
     loginOrLogoutUrl = "/login"
   }
+  console.log('navbar AuthContext3:', context);
+
+  useEffect(() => {
+    console.log("navbar useeffect")
+    if (context.checkTokenExp()) {
+      console.log("whoaa expired")
+
+      alert('session time is out, please login again'); // Replace with proper navigation or state updates
+
+      // navigate('/login');
+    }
+
+  }, [context, navigate]);
 
   return (
     <nav style={navbarStyle}>

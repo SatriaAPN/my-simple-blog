@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); // To handle errors
-  const { accessToken, saveTokens, clearTokens } = useAuth();
+  const { accessToken, saveTokens } = useAuth();
   const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const LoginPage = () => {
     try {
       // Replace this URL with your backend API endpoint
       const response = await axios.post(
-        'http://localhost:8000/api/auth/login', 
+        'http://localhost:8000/api/auth/login/', 
         {
           email,
           password,
@@ -42,8 +42,6 @@ const LoginPage = () => {
       
       const data = response.data.data
 
-      alert('Login Successful!'); // Replace with proper navigation or state updates
-      
       saveTokens(data.attributes.access_token, data.attributes.refresh_token);
 
       navigate('/');

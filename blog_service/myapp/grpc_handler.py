@@ -47,6 +47,7 @@ def getBlogDetailHandler(request) -> blog_service_pb2.GetBlogDetailResponse:
 
     if not writer.isSuccess:
         logger.error("GetUserByIdRequest: %s", writer.errorMsg)
+        writer.name = "anonymous"
 
     response = blog_service_pb2.GetBlogDetailResponse(
         isSuccess=True, 
@@ -70,10 +71,9 @@ def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
         request.pageSize = 10
 
     request.page = max(request.page,1)
-    logger.info("here1s")
 
     response = getBlogList(request.page, request.pageSize)
-    logger.info(f'Array contents: {response}')
+
     # Prepare response
     parsedBlogs = []
 
@@ -83,8 +83,6 @@ def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
             title=blog["title"],
             createdAt = str(blog["createdAt"])
         ))
-
-    logger.info(f'Array contents: {parsedBlogs}')
 
     maxPage = math.ceil(response["totalCount"] / request.pageSize)
     request.page = min(request.page, maxPage)

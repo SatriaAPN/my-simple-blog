@@ -1,16 +1,22 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (
-    auth_login_view, 
-    auth_register_view, 
-    create_blog_view, 
-    get_blog_view, 
-    test_view,
+    BlogViewSet,
+    LoginView,
+    RegisterView,
+    TokenRefreshView,
     )
+from django.urls import path, include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+)
+
+router = DefaultRouter()
+router.register(r'blogs', BlogViewSet, basename='blogs')
 
 urlpatterns = [
-    path('auth/login', auth_login_view, name='login'),
-    path('auth/register', auth_register_view, name='login'),
-    path('blogs', create_blog_view, name='createBlog'),
-    path('blogs/<str:blogUrl>', get_blog_view, name='getBlog'),
-    path('test', test_view, name='test'),
+    path('api/', include(router.urls)),
+    path('api/auth/login/', LoginView.as_view(), name='login'),
+    path('api/auth/register/', RegisterView.as_view(), name='register'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

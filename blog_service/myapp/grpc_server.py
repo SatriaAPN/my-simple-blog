@@ -13,7 +13,7 @@ logger = logging.getLogger('myapp')
 
 class BlogServiceServicer(blog_service_pb2_grpc.BlogServiceServicer):
     def CreateBlog(self, request, context):
-        logger.info('CreateBlog: ', request)
+        logger.info('CreateBlog: %s', request)
 
         return createBlogHandler(request)
 

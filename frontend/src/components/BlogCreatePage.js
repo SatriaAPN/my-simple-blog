@@ -17,11 +17,13 @@ const BlogCreatePage = () => {
   const navigate = useNavigate(); // Hook for navigation
   const context = useAuth();
 
+  console.log('Blog Create AuthContext:', context);
+
   useEffect(() => {
     if (context.accessToken == null) {
       console.log('unauthorized');
-      navigate('/login');
-    }
+      // navigate('/login');
+    } 
   }, [context.accessToken, navigate]);
 
   const handleSubmit = async (e) => {
@@ -33,30 +35,41 @@ const BlogCreatePage = () => {
       return;
     }
 
-    try {
-      // Replace this URL with your backend API endpoint
-      const response = await axios.post(
-        'http://localhost:8000/api/blogs', 
-        {
-          title,
-          content,
-        },
-        {
-          headers: { 'Content-Type': 'application/json' }, // No CSRF headers needed
-        }
-      );
+    // refreshing the access token before sending request
+    if (!context.checkTokenExp()) {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/api/blogs/', 
+          {
+            title,
+            content,
+          },
+          {
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${context.accessToken}` // Add Authorization header
+            },
+          }
+        );
 
-      console.log('Response:', response.data);
-      alert('Create Blog Successful!'); // Replace with proper navigation or state updates
-      // navigate('/');
-      
-    } catch (err) {
-      console.error('Error:', err);
-      if (err.response && err.response.data && err.response.data.errors) {
-        setError(err.response.data.errors[0].detail);
+        console.log('Response:', response.data);
+        alert('Create Blog Successful!'); // Replace with proper navigation or state updates
+        navigate('/');
+        
+      } catch (err) {
+        console.error('Error:', err);
+        if (err.response && err.response.data && err.response.data.errors) {
+          setError(err.response.data.errors[0].detail);
+        }
+        else
+          setError('something is wrong, please try again');
       }
-      else
-        setError('something is wrong');
+    } else{
+      console.log("whoaa expired")
+
+      alert('session time is out, please login again'); // Replace with proper navigation or state updates
+
+      navigate('/login');
     }
   };
 
