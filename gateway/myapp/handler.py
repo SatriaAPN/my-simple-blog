@@ -13,6 +13,7 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from myapp.general_struct import JwtDataStruct
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 
 logger = logging.getLogger('myapp')
 
@@ -44,7 +45,6 @@ def auth_register_post_handler(request):
       status=HTTPStatus.CREATED
   )
 
-
 def auth_login_post_handler(request):
   try:
     data = json.loads(request.body)
@@ -75,7 +75,6 @@ def auth_login_post_handler(request):
       status=HTTPStatus.OK
   )
 
-
 def create_blog_post_handler(request):
   userId = request.user.get("user_id")
 
@@ -103,6 +102,39 @@ def create_blog_post_handler(request):
       status=HTTPStatus.CREATED
   )
 
+def update_blog_hide_handler(request):
+  if request.user.get("user_role") != "admin":
+    return errorReturn("Unauthorized", HTTPStatus.UNAUTHORIZED)
+
+  try:
+    data = json.loads(request.body)
+    url = data.get("url")
+    hide = data.get("hide")
+  except json.JSONDecodeError:
+    return errorReturn("Invalid JSON", HTTPStatus.BAD_REQUEST)
+  
+  if not url:
+    return errorReturn("url variable is missing", HTTPStatus.BAD_REQUEST)
+  if hide == None:
+    return errorReturn("hide variable is missiing", HTTPStatus.BAD_REQUEST)
+
+  with grpc.insecure_channel('blog-service:50051') as channel:
+    stub = blog_service_pb2_grpc.BlogServiceStub(channel)
+    response = stub.UpdateBlogHideInfo(blog_service_pb2.UpdateBlogHideInfoRequest(
+        url=url,hide=hide))
+    logger.info("here %s", response)
+  if not response.isSuccess:
+    return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
+
+  return JsonResponse(
+      {
+          "data": {
+              "url": url,
+              "hide": hide
+          }
+      },
+      status=HTTPStatus.OK
+  )
 
 def blog_detail_get_handler(request, blogUrl):
   with grpc.insecure_channel('blog-service:50051') as channel:
@@ -136,15 +168,21 @@ def blog_detail_get_handler(request, blogUrl):
       status=HTTPStatus.OK
   )
 
-
 def blog_list_get_handler(request):
   page = int(request.GET.get('page', 1))
+  pageView  = request.GET.get('pageView', 'home')
   pageSize = 10
+  showHiden = False
+  logger.info(request.user)
+  logger.info(type(request.user))
+
+  if request.user.is_authenticated and request.user.get("user_role") == "admin":
+    showHiden = pageView == 'admin-management'
 
   with grpc.insecure_channel('blog-service:50051') as channel:
     stub = blog_service_pb2_grpc.BlogServiceStub(channel)
     response = stub.GetBlogList(
-        blog_service_pb2.GetBlogListRequest(page=page, pageSize=pageSize))
+        blog_service_pb2.GetBlogListRequest(page=page, pageSize=pageSize, showHiden=showHiden))
 
   if not response.isSuccess:
     return errorReturn(response.errorMsg, HTTPStatus.BAD_REQUEST)
@@ -152,11 +190,16 @@ def blog_list_get_handler(request):
   blogs = []
 
   for blog in response.blogs:
-    blogs.append({
+    newBlog = {
         "url": blog.url,
         "title": blog.title,
         "createdAt": blog.createdAt
-    })
+    }
+
+    if showHiden:
+      newBlog["isHiden"] = blog.isHiden
+
+    blogs.append(newBlog)
 
   return JsonResponse(
       {

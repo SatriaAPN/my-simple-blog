@@ -7,20 +7,31 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || null);
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || null);
 
   const saveTokens = (access, refresh) => {
     setAccessToken(access);
     setRefreshToken(refresh);
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken', refresh);
+    
+    saveUserRole(access)
   };
 
   const clearTokens = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setUserRole(null)
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userRole');
   };
+
+  const saveUserRole = (access) => {
+    const decoded = jwtDecode(access);
+    setUserRole(decoded.user_role);
+    localStorage.setItem('userRole', decoded.user_role);
+  }
 
   const checkTokenExp = () => {
     if (accessToken == null) {
@@ -43,7 +54,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     console.log("access token expired")
-
 
     try {
       console.log("refreshing access token")
@@ -92,7 +102,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, saveTokens, clearTokens, checkTokenExp }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, userRole, saveTokens, clearTokens, checkTokenExp }}>
       {children}
     </AuthContext.Provider>
   );

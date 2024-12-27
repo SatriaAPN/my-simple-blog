@@ -6,6 +6,7 @@ from .handler import (
     blog_detail_get_handler,
     blog_list_get_handler,
     token_refresh_post_handler,
+    update_blog_hide_handler,
 )
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -65,3 +66,12 @@ class TokenRefreshView(APIView):
     logger.info(request.method + ' /api/token/refresh/ %s', request.body)
 
     return token_refresh_post_handler(request)
+
+
+class UpdateBlogHideView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    logger.info(request.method + ' /api/admin/blogs/hide %s', request.body)
+
+    return update_blog_hide_handler(request)

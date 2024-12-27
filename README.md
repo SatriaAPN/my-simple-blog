@@ -8,6 +8,7 @@ this is a full-stack blog application that you can use to create your very own b
 3. Blog writing.
 4. List of blogs in the homepage.
 5. Blog detail.
+6. admin blog-management page.
 
 #### Some features that might be added in the future:
 1. Blog engagement features such as like and comment.
@@ -36,6 +37,7 @@ git clone https://github.com/SatriaAPN/my-simple-blog.git
 Docker-Compose up --build
 ```
 4. After all the services has running, you then can access the frontend in the localhost:3000
+5. you can try use admin user with this credentials: email=admin@example.com password=admin123
 
 ## System Overview
 This is an simplified overview of the system microservices architecture.
