@@ -31,9 +31,14 @@ const Navbar = () => {
         <li style={liStyle}>
           <Link to="/" style={linkStyle}>Home</Link>
         </li>
-        {context.accessToken != null && ( 
+        {context.accessToken != null && context.userRole === "writer" && ( 
           <li style={liStyle}>
             <Link to="/blogs/create" style={linkStyle}>Create Blog</Link>
+          </li>
+        )}
+        {context.accessToken != null && context.userRole === "admin" && ( 
+          <li style={liStyle}>
+            <Link to="/admin/blogs" style={linkStyle}>Admin Blog Management</Link>
           </li>
         )}
         <li style={liStyle}>

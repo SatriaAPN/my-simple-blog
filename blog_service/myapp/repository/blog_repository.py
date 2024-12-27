@@ -13,13 +13,14 @@ def getBlogByTitle(title: str) -> Blog:
 
 
 def getBlogByUrl(url: str) -> Blog:
-  blog = Blog.objects.filter(url=url).first()
-
-  return blog
+  return Blog.objects.filter(url=url).first()
 
 
-def getBlogList(page: int, pageSize: int) -> dict:
-  blogs = Blog.objects.all()
+def getBlogList(page: int, pageSize: int, showHiden: bool) -> dict:
+  if not showHiden:
+    blogs = Blog.objects.filter(isHiden=False)
+  else:
+    blogs = Blog.objects.all()
 
   blogs = blogs.order_by("-created_at")
 
@@ -39,6 +40,7 @@ def getBlogList(page: int, pageSize: int) -> dict:
             "title": blog.title,
             "createdAt": blog.created_at,
             "writerId": blog.writerId,
+            "isHiden": blog.isHiden,
         }
     )
 
@@ -56,7 +58,6 @@ def createBlog(blogData: BlogStruct) -> Blog:
   )
 
   return blog
-
 
 def generateUrl(title: str) -> str:
   url = title.split(" ")

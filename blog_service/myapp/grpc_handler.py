@@ -87,10 +87,12 @@ def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
     request.page = 1
   if not request.pageSize:
     request.pageSize = 10
+  if request.showHiden == None:
+    request.showHiden = False
 
   request.page = max(request.page, 1)
 
-  response = getBlogList(request.page, request.pageSize)
+  response = getBlogList(request.page, request.pageSize, request.showHiden)
 
   # Prepare response
   parsedBlogs = []
@@ -101,6 +103,7 @@ def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
             url=blog["url"],
             title=blog["title"],
             createdAt=str(blog["createdAt"]),
+            isHiden=blog["isHiden"]
         )
     )
 
@@ -117,3 +120,15 @@ def getBlogListHandler(request) -> blog_service_pb2.GetBlogListResponse:
       nextPage=None if request.page == maxPage else request.page + 1,
       pageSize=request.pageSize,
   )
+
+def UpdateBlogHideInfoHandler(request) -> blog_service_pb2.UpdateBlogHideInfoResponse:
+  blog = getBlogByUrl(request.url)
+
+  if not blog:
+    blog_service_pb2.GetBlogDetailResponse(isSuccess=False, errorMsg="Blog not found")
+
+  blog.isHiden = request.hide
+
+  blog.save()
+
+  return blog_service_pb2.UpdateBlogHideInfoResponse(isSuccess=True, errorMsg="")
