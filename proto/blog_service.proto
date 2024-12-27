@@ -4,6 +4,7 @@ service BlogService {
     rpc CreateBlog (CreateBlogRequest) returns (CreateBlogResponse);
     rpc GetBlogDetail (GetBlogDetailRequest) returns (GetBlogDetailResponse);
     rpc GetBlogList (GetBlogListRequest) returns (GetBlogListResponse);
+    rpc UpdateBlogHideInfo (UpdateBlogHideInfoRequest) returns (UpdateBlogHideInfoResponse);
 }
 
 message CreateBlogRequest {
@@ -35,12 +36,14 @@ message GetBlogDetailResponse {
 message GetBlogListRequest {
     int32 page = 1;
     int32 pageSize = 2;
+    bool showHiden = 3;
 }
 
 message BlogSummary {
     string url = 1;
     string title = 2;
     string createdAt = 3;
+    bool isHiden = 4;
 }
 
 message GetBlogListResponse {
@@ -52,4 +55,14 @@ message GetBlogListResponse {
     int32 prevPage = 6;
     int32 nextPage = 7;
     int32 pageSize = 8;
+}
+
+message UpdateBlogHideInfoRequest {
+    string url = 1;
+    bool hide = 2;
+}
+
+message UpdateBlogHideInfoResponse {
+    bool isSuccess = 1;
+    string errorMsg = 2;
 }

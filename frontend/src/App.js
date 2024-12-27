@@ -8,6 +8,7 @@ import BlogsCreatePage from './components/BlogCreatePage'
 import BlogsDetailPage from './components/BlogDetailPage'
 import { AuthProvider } from './AuthContext';
 import Navbar from './components/Navbar';
+import AdminBlogPage from './components/AdminBlogPage'
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/blogs/create" element={<BlogsCreatePage />} />
             <Route path="/blogs/:title" element={<BlogsDetailPage />} />
+            <Route path="/admin/blogs" element={<AdminBlogPage />} />
           </Routes>
         </div>
       </Router>

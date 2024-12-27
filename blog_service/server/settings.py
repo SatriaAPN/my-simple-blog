@@ -165,7 +165,7 @@ LOGGING = {
         },
         "myapp": {  # Custom logger for your app
             "handlers": ["file", "console"],
-            # "level": "DEBUG",  # Minimum log level
+            "level": "DEBUG",  # Minimum log level
             "propagate": False,
         },
     },

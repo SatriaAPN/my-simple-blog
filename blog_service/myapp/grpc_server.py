@@ -7,6 +7,7 @@ from .grpc_handler import (
     createBlogHandler,
     getBlogDetailHandler,
     getBlogListHandler,
+    UpdateBlogHideInfoHandler,
 )
 
 logger = logging.getLogger("myapp")
@@ -27,6 +28,11 @@ class BlogServiceServicer(blog_service_pb2_grpc.BlogServiceServicer):
     logger.info("GetBlogList: %s", request)
 
     return getBlogListHandler(request)
+  
+  def UpdateBlogHideInfo(self, request, context):
+    logger.info("UpdateBlogHideInfo: %s", request)
+
+    return UpdateBlogHideInfoHandler(request)
 
 
 def serve():
